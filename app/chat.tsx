@@ -200,6 +200,12 @@ export function Chat() {
   const [, setIsCheckingEnv] = useState<boolean>(true);
   const [pendingQuery, setPendingQuery] = useState<string>('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [messageIdCounter, setMessageIdCounter] = useState(0);
+
+  const getNextMessageId = () => {
+    setMessageIdCounter(prev => prev + 1);
+    return `msg-${messageIdCounter}`;
+  };
 
   const handleSelectSuggestion = (suggestion: string) => {
     setInput(suggestion);
@@ -277,7 +283,7 @@ export function Chat() {
     setIsSearching(true);
 
     // Create assistant message with search display
-    const assistantMsgId = (Date.now() + 1).toString();
+    const assistantMsgId = getNextMessageId();
     const events: SearchEvent[] = [];
     
     setMessages(prev => [...prev, {
@@ -312,7 +318,7 @@ export function Chat() {
       
       // Read stream and update events
       let streamingStarted = false;
-      const resultMsgId = (Date.now() + 2).toString();
+      const resultMsgId = getNextMessageId();
       
       for await (const event of readStreamableValue(stream)) {
         if (event) {
@@ -419,7 +425,7 @@ export function Chat() {
       // Show error message to user
       const errorMessage = error instanceof Error ? error.message : 'An error occurred during search';
       setMessages(prev => [...prev, {
-        id: Date.now().toString(),
+        id: getNextMessageId(),
         role: 'assistant',
         content: (
           <div className="p-4 border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 rounded-lg">
@@ -457,7 +463,7 @@ export function Chat() {
       setShowApiKeyModal(true);
       
       // Still add user message to show what they asked
-      const userMsgId = Date.now().toString();
+      const userMsgId = getNextMessageId();
       setMessages(prev => [...prev, {
         id: userMsgId,
         role: 'user',
@@ -468,7 +474,7 @@ export function Chat() {
     }
 
     // Add user message
-    const userMsgId = Date.now().toString();
+    const userMsgId = getNextMessageId();
     setMessages(prev => [...prev, {
       id: userMsgId,
       role: 'user',
@@ -636,6 +642,7 @@ export function Chat() {
                       className="w-full text-left px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg transition-colors text-sm text-gray-700 dark:text-gray-300"
                     >
                       <div className="flex items-center gap-2">
+                
                         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>

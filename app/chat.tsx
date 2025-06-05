@@ -200,11 +200,11 @@ export function Chat() {
   const [, setIsCheckingEnv] = useState<boolean>(true);
   const [pendingQuery, setPendingQuery] = useState<string>('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const [messageIdCounter, setMessageIdCounter] = useState(0);
+  const messageIdCounterRef = useRef(0);
 
   const getNextMessageId = () => {
-    setMessageIdCounter(prev => prev + 1);
-    return `msg-${messageIdCounter}`;
+    messageIdCounterRef.current += 1;
+    return `msg-${messageIdCounterRef.current}`;
   };
 
   const handleSelectSuggestion = (suggestion: string) => {
